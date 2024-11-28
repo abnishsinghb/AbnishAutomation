@@ -1,0 +1,13 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="BDD Test Suite" verbose="1" parallel="classes" thread-count="3" configfailurepolicy="continue">
+      <listeners>
+        <!-- Use ReportNG to generate HTML reports -->
+        <listener class-name="org.uncommons.reportng.HTMLReporter" />
+        <listener class-name="org.uncommons.reportng.JUnitXMLReporter" />
+    </listeners>
+    <test name="Cucumber Tests">
+        <classes>
+            <class name="testrunners.MyTestRunner"/>
+        </classes>
+    </test>
+</suite>
