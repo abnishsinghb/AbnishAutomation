@@ -2,7 +2,6 @@ package util;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -32,6 +31,5 @@ public class Constants {
 	public static final String Dependence_DATA_FILE_LOCATION = System.getProperty("user.dir") + "\\testDependence.xlsx";
 	public static int numberOfVeraInCalculation;	
 	public static ArrayList<String> permissions = new ArrayList<>(Arrays.asList("BNG_ManageAdminBNG", "BNG_ManageBNGBeltDataSets","BNG_ManageBNGStiffnessDataSets","Calculations_BNG", "Calculations_RackSim", "Calculations_Vera", "Calculations_TieRodTool","General_ManageCustomers","General_ManageStandardLoadCases","General_ManageStandardReports","KinematicPositions_StandardPositions","Material_ManageMaterialDataSets","Projects_ReopenCalculations","TieRodTool_ManageTieRodToolDataSets","Vera_FootnoteManager","Vera_ManageHobberToolbox","Vera_ManageTolerances","Vera_ManageToleranceSets","Vera_ManageUnihobberToolbox","Vera_ManageVeraCriteria","Vera_ManageVeraCriteriaSets","Vera_ManageVeraToothingDatabase","Vera_UseTheToothingManager","WormGear_ManageWormGearDatasets"));
-
 }
 

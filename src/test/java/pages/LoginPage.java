@@ -2,7 +2,6 @@ package pages;
 
 
 import org.openqa.selenium.By;
-
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
@@ -64,6 +63,20 @@ public class LoginPage {
         String forgotPwdPageUrl = driver.getCurrentUrl();
         return forgotPwdPageUrl;
     }
+    
+	public By getTxt_EmailInputLocator() {
+		return emailInputLocator;
+	}	
+	
+	public By getTxt_passwordInputLocator() {
+		return passwordInputLocator;
+	}	
+	public By getBtn_loginButton() {
+		return loginButtonLocator;
+	}
 
-
+	public By getLink_logout() {
+		return logoutLinkLocator;
+	}
+	
 }

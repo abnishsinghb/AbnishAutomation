@@ -2,8 +2,9 @@
 "LoginPage":{
 			"email":"email",
 			"password":"password",
-			"login_Btn":"//input[@type='submit']",
 			"Forgotten":"Forgotten Password",
-			"Logout_Txt":"Logout"
+			"login_Btn":"//input[@value='Login']",
+		"Logout_Txt":"Logout",
+			"LoadingIcon":"//i[@class='fa fa-home']"
    }
 }
