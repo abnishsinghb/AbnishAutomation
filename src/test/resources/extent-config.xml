@@ -1,44 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <extentreports>
-	<configuration>
-		<!-- report theme -->
+    <configuration>
+        <!-- Existing configurations -->
+        <theme>dark</theme>
+        <encoding>UTF-8</encoding>
+        <protocol>http</protocol>
+        <documentTitle>Extent</documentTitle>
+        <thumbnailBase64>true</thumbnailBase64>
+        <reportName>Grasshopper Report</reportName>
+        <testViewChartLocation>bottom</testViewChartLocation>
 
-		<!-- standard, dark -->
+        <!-- Add path for FreeMarker templates -->
+        <templateLoaderPath>/path/to/your/templates</templateLoaderPath>
 
-		<theme>dark</theme>
-		<!-- document encoding -->
+        <!-- Locale for template loading (optional) -->
+        <locale>en_US</locale>
 
-		<!-- defaults to UTF-8 -->
+        <!-- Enable or disable template cache (optional) -->
+        <templateCacheEnabled>false</templateCacheEnabled>
 
-		<encoding>UTF-8</encoding>
-		<!-- protocol for script and stylesheets -->
+        <!-- Custom JavaScript -->
+        <scripts>
+            <![CDATA[
+            $(document).ready(function() {
+            });
+            ]]>
+        </scripts>
 
-		<!-- defaults to https -->
-
-		<protocol>http</protocol>
-		<!-- title of the document -->
-		<documentTitle>Extent</documentTitle>
-		<!-- report name - displayed at top-nav -->
-
-		<reportName>Grasshopper Report</reportName>
-		<!-- location of charts in the test view -->
-
-		<!-- top, bottom -->
-
-		<testViewChartLocation>bottom</testViewChartLocation>
-		<!-- custom javascript -->
-
-		<scripts>
-
-<![CDATA[
-$(document).ready(function() {
-});
-]]>
-		</scripts>
-		<!-- custom styles -->
-		<styles>
-<![CDATA[
-]]>
-		</styles>
-	</configuration>
+        <!-- Custom Styles -->
+        <styles>
+            <![CDATA[
+            ]]>
+        </styles>
+    </configuration>
 </extentreports>

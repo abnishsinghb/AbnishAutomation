@@ -4,11 +4,15 @@
   I want to be able to log in with my account
   So that I can access my account-related features and manage my orders
 
-  Scenario: Successful login with valid credentials
-    Given I have entered a valid username and password
-    When I click on the login button
+  Scenario Outline: Successful login with valid credentials
+    Given I have entered a valid "<username>" and "<password>"
+    When I click on the login button 
     Then I should be logged in successfully
-#
+    
+  Examples:
+    | username               | password |
+    | qatestertest@gmail.com | Test@123 |
+
   #Scenario Outline: Unsuccessful login with invalid or empty credentials
     #Given I have entered invalid "<username>" and "<password>"
     #When I click on the login button

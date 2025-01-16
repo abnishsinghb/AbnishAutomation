@@ -1,14 +1,4 @@
 package util;
-
-import java.awt.Robot;
-import java.awt.Toolkit;
-import java.awt.datatransfer.StringSelection;
-import java.awt.event.KeyEvent;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileReader;
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -20,40 +10,26 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.Keys;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.FluentWait;
-import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.Wait;
 import org.testng.Reporter;
-
-import com.aventstack.extentreports.ExtentReports;
-import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.Status;
+import com.aventstack.extentreports.cucumber.adapter.ExtentCucumberAdapter;
+import com.aventstack.extentreports.reporter.ExtentSparkReporter;
 
 import setup.DriverFactory;
-
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.List;
 import org.testng.Assert;
 
 /**
@@ -61,7 +37,7 @@ import org.testng.Assert;
  * clear and fill, drag and drop, fluent waits and getting environment
  * variables.
  */
-public class ElementUtil {
+public class ElementUtil extends DriverFactory{
 
 	static Map<String, Object> map = new HashMap<String, Object>();
 	static Instant start;
@@ -194,19 +170,19 @@ public class ElementUtil {
 /**
  * Click on an element
  */
-public static Statuss click(By xpath, String fieldName) {
+public static StatusResult click(By xpath, String fieldName) {
 	return click(xpath, fieldName, true);
 }
 
 /**
  * Click on an element Overloaded Method
  */
-public static Statuss click(By xpath, String fieldName, boolean allowException) {
-	Statuss Statuss = new Statuss(true, "");
+public static StatusResult click(By xpath, String fieldName, boolean allowException) {
+	StatusResult LogStatusResult = new StatusResult(true, "");
 	By loadingIcon = getElementIdentifierFromJson("LoadingIcon", "xpath");
 	try {
 		startTimer();
-		while (getAttribute(loadingIcon, "class", "loading icon class Statuss", false).contentEquals("loading")) {
+		while (getAttribute(loadingIcon, "class", "loading icon class StatusResult", false).contentEquals("loading")) {
 			threadSleep(1000);
 		}
 		fluentWaitForVisibility(xpath, 5, false);
@@ -215,47 +191,48 @@ public static Statuss click(By xpath, String fieldName, boolean allowException) 
 		element.click();
 		endTimer();
 	
-		Reporter.log("Clicked on " + fieldName + "<br></br>Time elapsed- " + getElapsedTime() + "<br></br>");
+		Reporter.log("Clicked on " + fieldName + "\nTime elapsed- " + getElapsedTime() + "\n");
+	//	ExtentCucumberAdapter.addTestStepLog("Clicked on " + fieldName + "\nTime elapsed- " + getElapsedTime() + "\n");
 	} catch (NoSuchElementException e) {
 		endTimer();
 		if (allowException) {
-			Statuss.setStatus(false);
-			Statuss.setError("Error in clicking element by xpath :" + xpath + " Details: " + e.getMessage());
+			LogStatusResult.setStatus(false);
+			LogStatusResult.setError("Error in clicking element by xpath :" + xpath + " Details: " + e.getMessage());
 			Assert.fail("Error in clicking element by xpath :" + xpath + " Details: " + e.getMessage()
-					+ "<br></br>Time elapsed- " + getElapsedTime() + "<br></br>");
+					+ "\nTime elapsed- " + getElapsedTime() + "\n");
 		} else {
-			Statuss.setStatus(false);
+			LogStatusResult.setStatus(false);
 		}
 	} catch (Exception e) {
 		endTimer();
 		if (allowException) {
-			Statuss.setStatus(false);
-			Statuss.setError("Error in clicking element by xpath :" + xpath + " Details: " + e.getMessage());
+			LogStatusResult.setStatus(false);
+			LogStatusResult.setError("Error in clicking element by xpath :" + xpath + " Details: " + e.getMessage());
 			Assert.fail("Error in clicking element by xpath :" + xpath + " Details: " + e.getMessage()
-					+ "<br></br>Time elapsed- " + getElapsedTime() + "<br></br>");
+					+ "\nTime elapsed- " + getElapsedTime() + "\n");
 		} else {
-			Statuss.setStatus(false);
+			LogStatusResult.setStatus(false);
 		}
 	}
-	return Statuss;
+	return LogStatusResult;
 }
 
 /**
  * Verify the radio button isSelected or not
  */
-public static Statuss isSelected(By xpath, String fieldName) {
+public static StatusResult isSelected(By xpath, String fieldName) {
 	return click(xpath, fieldName, true);
 }
 
 /**
  * Verify the radio button isSelected or not
  */
-public static Statuss isSelected(By xpath, String fieldName, boolean allowException) {
-	Statuss Statuss = new Statuss(true, "");
+public static StatusResult isSelected(By xpath, String fieldName, boolean allowException) {
+	StatusResult LogStatusResult = new StatusResult(true, "");
 	By loadingIcon = getElementIdentifierFromJson("LoadingIcon", "xpath");
 	try {
 		startTimer();
-		while (getAttribute(loadingIcon, "class", "loading icon class Statuss", false).contentEquals("loading")) {
+		while (getAttribute(loadingIcon, "class", "loading icon class StatusResult", false).contentEquals("loading")) {
 			threadSleep(1000);
 		}
 		fluentWaitForVisibility(xpath, 5, false);
@@ -263,29 +240,29 @@ public static Statuss isSelected(By xpath, String fieldName, boolean allowExcept
 		WebElement element = DriverFactory.getDriver().findElement(xpath);
 		element.isSelected();
 		endTimer();
-		Reporter.log("Selected " + fieldName + "<br></br>Time elapsed- " + getElapsedTime() + "<br></br>");
+		Reporter.log("Selected " + fieldName + "\nTime elapsed- " + getElapsedTime() + "\n");
 	} catch (NoSuchElementException e) {
 		endTimer();
 		if (allowException) {
-			Statuss.setStatus(false);
-			Statuss.setError("Error in Verifying the element by xpath :" + xpath + " Details: " + e.getMessage());
+			LogStatusResult.setStatus(false);
+			LogStatusResult.setError("Error in Verifying the element by xpath :" + xpath + " Details: " + e.getMessage());
 			Assert.fail("Error in Verifying the element by xpath :" + xpath + " Details: " + e.getMessage()
-					+ "<br></br>Time elapsed- " + getElapsedTime() + "<br></br>");
+					+ "\nTime elapsed- " + getElapsedTime() + "\n");
 		} else {
-			Statuss.setStatus(false);
+			LogStatusResult.setStatus(false);
 		}
 	} catch (Exception e) {
 		endTimer();
 		if (allowException) {
-			Statuss.setStatus(false);
-			Statuss.setError("Error in Verifying the element by xpath :" + xpath + " Details: " + e.getMessage());
+			LogStatusResult.setStatus(false);
+			LogStatusResult.setError("Error in Verifying the element by xpath :" + xpath + " Details: " + e.getMessage());
 			Assert.fail("Error in Verifying the element by xpath :" + xpath + " Details: " + e.getMessage()
-					+ "<br></br>Time elapsed- " + getElapsedTime() + "<br></br>");
+					+ "\nTime elapsed- " + getElapsedTime() + "\n");
 		} else {
-			Statuss.setStatus(false);
+			LogStatusResult.setStatus(false);
 		}
 	}
-	return Statuss;
+	return LogStatusResult;
 }
 
 /**
@@ -300,7 +277,7 @@ public static boolean checkIfElementIsPresent(By ele) {
  * method
  */
 public static boolean checkIfElementIsPresent(By ele, boolean allowExcpetion) {
-	Statuss Statuss = new Statuss(true);
+	StatusResult LogStatusResult = new StatusResult(true);
 	WebElement element = null;
 	boolean flag = false;
 	try {
@@ -311,20 +288,20 @@ public static boolean checkIfElementIsPresent(By ele, boolean allowExcpetion) {
 	} catch (NoSuchElementException e) {
 		if (allowExcpetion) {
 			flag = false;
-			Statuss.setStatus(false);
+			LogStatusResult.setStatus(false);
 			Assert.fail("No Element Found:" + ele + e.getMessage());
 		} else {
 			flag = false;
-			Statuss.setStatus(false);
+			LogStatusResult.setStatus(false);
 		}
 	} catch (Exception e) {
 		if (allowExcpetion) {
 			flag = false;
-			Statuss.setStatus(false);
+			LogStatusResult.setStatus(false);
 			Assert.fail("No Element Found:" + ele + e.getMessage());
 		} else {
 			flag = false;
-			Statuss.setStatus(false);
+			LogStatusResult.setStatus(false);
 		}
 	}
 	return flag;
@@ -341,7 +318,7 @@ public static String getText(By xpath, String fieldName) {
  * Returns text present between element tags Overloaded Method
  */
 public static String getText(By xpath, String fieldName, boolean allowException) {
-	Statuss Statuss = new Statuss(true);
+	StatusResult LogStatusResult = new StatusResult(true);
 	String textvalue = "";
 	try {
 		startTimer();
@@ -349,24 +326,24 @@ public static String getText(By xpath, String fieldName, boolean allowException)
 		WebElement element = DriverFactory.getDriver().findElement(xpath);
 		textvalue = element.getText();
 		endTimer();
-		Reporter.log("Retrieved " + fieldName + "<br></br>Time elapsed- " + getElapsedTime() + "<br></br>");
+		Reporter.log("Retrieved " + fieldName + "\nTime elapsed- " + getElapsedTime() + "\n");
 	} catch (NoSuchElementException e) {
 		if (allowException) {
-			Statuss.setStatus(false);
+			LogStatusResult.setStatus(false);
 			endTimer();
 			Assert.fail("Error in getting the text from xpath :" + xpath + " Details: " + e.getMessage()
-					+ "<br></br>Time elapsed- " + getElapsedTime() + "<br></br>");
+					+ "\nTime elapsed- " + getElapsedTime() + "\n");
 		} else {
-			Statuss.setStatus(false);
+			LogStatusResult.setStatus(false);
 		}
 	} catch (Exception e) {
 		if (allowException) {
-			Statuss.setStatus(false);
+			LogStatusResult.setStatus(false);
 			endTimer();
 			Assert.fail("Error in getting the text from xpath :" + xpath + " Details: " + e.getMessage()
-					+ "<br></br>Time elapsed- " + getElapsedTime() + "<br></br>");
+					+ "\nTime elapsed- " + getElapsedTime() + "\n");
 		} else {
-			Statuss.setStatus(false);
+			LogStatusResult.setStatus(false);
 		}
 	}
 	return textvalue.trim();
@@ -375,28 +352,28 @@ public static String getText(By xpath, String fieldName, boolean allowException)
 /**
  * Page refresh
  */
-public static Statuss refreshPage() {
-	Statuss Statuss = new Statuss(true, "");
+public static StatusResult refreshPage() {
+	StatusResult LogStatusResult = new StatusResult(true, "");
 	try {
 		DriverFactory.getDriver().navigate().refresh();
-		Reporter.log("Refreshed web page <br></br>");
+		Reporter.log("Refreshed web page \n");
 	} catch (Exception e) {
-		Statuss.setStatus(false);
+		LogStatusResult.setStatus(false);
 	}
-	return Statuss;
+	return LogStatusResult;
 }
 /**
  * Page back
  */
-public static Statuss backPage() {
-	Statuss Statuss = new Statuss(true, "");
+public static StatusResult backPage() {
+	StatusResult LogStatusResult = new StatusResult(true, "");
 	try {
 		DriverFactory.getDriver().navigate().back();
-		Reporter.log("Backward web page <br></br>");
+		Reporter.log("Backward web page \n");
 	} catch (Exception e) {
-		Statuss.setStatus(false);
+		LogStatusResult.setStatus(false);
 	}
-	return Statuss;
+	return LogStatusResult;
 }
 
 /**
@@ -428,7 +405,7 @@ public static boolean checkTextPresence(String key, boolean allowException) {
  * Dynamic wait for Download the file to be completed
  */
 
-public static Statuss fluentWaitForDownloadComplete(By xpath) {
+public static StatusResult fluentWaitForDownloadComplete(By xpath) {
 	return fluentWaitForVisibility(xpath, 60, false);
 }
 
@@ -436,16 +413,16 @@ public static Statuss fluentWaitForDownloadComplete(By xpath) {
  * Dynamic wait for visibility of an element
  */
 
-public static Statuss fluentWaitForVisibility(By xpath) {
+public static StatusResult fluentWaitForVisibility(By xpath) {
 	return fluentWaitForVisibility(xpath, 60, true);
 }
 
 /**
  * Dynamic wait for visibility of an element Overloaded Method
  */
-public static Statuss fluentWaitForVisibility(By xpath, int durationInSeconds, boolean allowException) {
+public static StatusResult fluentWaitForVisibility(By xpath, int durationInSeconds, boolean allowException) {
 
-	Statuss Statuss = new Statuss(true);
+	StatusResult LogStatusResult = new StatusResult(true);
 
 	try {
 		Wait<WebDriver> fluentWait = new FluentWait<WebDriver>(DriverFactory.getDriver())
@@ -454,41 +431,41 @@ public static Statuss fluentWaitForVisibility(By xpath, int durationInSeconds, b
 		fluentWait.until(ExpectedConditions.visibilityOfElementLocated(xpath));
 	} catch (NoSuchElementException e) {
 		if (allowException) {
-			Statuss.setStatus(false);
-			Statuss.setError("Error while waiting for visibility of element in path: '" + xpath + "' Details: "
+			LogStatusResult.setStatus(false);
+			LogStatusResult.setError("Error while waiting for visibility of element in path: '" + xpath + "' Details: "
 					+ e.getMessage());
 			Assert.fail("Error while waiting for visibility of element in path: '" + xpath + "' Details: "
 					+ e.getMessage());
 		} else {
-			Statuss.setStatus(false);
+			LogStatusResult.setStatus(false);
 		}
 	} catch (Exception e) {
 		if (allowException) {
-			Statuss.setStatus(false);
-			Statuss.setError("Error while waiting for visibility of element in path: '" + xpath + "' Details: "
+			LogStatusResult.setStatus(false);
+			LogStatusResult.setError("Error while waiting for visibility of element in path: '" + xpath + "' Details: "
 					+ e.getMessage());
 			Assert.fail("Error while waiting for visibility of element in path: '" + xpath + "' Details: "
 					+ e.getMessage());
 		} else {
-			Statuss.setStatus(false);
+			LogStatusResult.setStatus(false);
 		}
 	}
-	return Statuss;
+	return LogStatusResult;
 }
 
 /**
  * Dynamic wait for clickability of an element
  */
-public static Statuss fluentWaitForClickable(By xpath) {
+public static StatusResult fluentWaitForClickable(By xpath) {
 	return fluentWaitForClickable(xpath, 60, true);
 }
 
 /**
  * Dynamic wait for clickability of an element Overloaded Method
  */
-public static Statuss fluentWaitForClickable(By xpath, int durationInSeconds, boolean allowException) {
+public static StatusResult fluentWaitForClickable(By xpath, int durationInSeconds, boolean allowException) {
 
-	Statuss Statuss = new Statuss(true);
+	StatusResult LogStatusResult = new StatusResult(true);
 
 	try {
 		Wait<WebDriver> fluentWait = new FluentWait<WebDriver>(DriverFactory.getDriver())
@@ -497,32 +474,33 @@ public static Statuss fluentWaitForClickable(By xpath, int durationInSeconds, bo
 		fluentWait.until(ExpectedConditions.elementToBeClickable(xpath));
 	} catch (NoSuchElementException e) {
 		if (allowException) {
-			Statuss.setStatus(false);
-			Statuss.setError(
+			LogStatusResult.setStatus(false);
+			LogStatusResult.setError(
 					"Error while waiting to click element in path: '" + xpath + "' Details: " + e.getMessage());
 			Assert.fail("Error while waiting to click element in path: '" + xpath + "' Details: " + e.getMessage());
+			
 		} else {
-			Statuss.setStatus(false);
+			LogStatusResult.setStatus(false);
 		}
 	} catch (Exception e) {
 		if (allowException) {
-			Statuss.setStatus(false);
-			Statuss.setError(
+			LogStatusResult.setStatus(false);
+			LogStatusResult.setError(
 					"Error while waiting to click element in path: '" + xpath + "' Details: " + e.getMessage());
 			Assert.fail("Error while waiting to click element in path: '" + xpath + "' Details: " + e.getMessage());
 		} else {
-			Statuss.setStatus(false);
+			LogStatusResult.setStatus(false);
 		}
 	}
-	return Statuss;
+	return LogStatusResult;
 }
 
 /**
  * Dynamic wait for text to be available in an element
  */
-public static Statuss fluentWaitForTextToBePresentInElement(By element, String text, int durationInSeconds) {
+public static StatusResult fluentWaitForTextToBePresentInElement(By element, String text, int durationInSeconds) {
 
-	Statuss Statuss = new Statuss(true);
+	StatusResult StatusResult = new StatusResult(true);
 
 	try {
 		Wait<WebDriver> fluentWait = new FluentWait<WebDriver>(DriverFactory.getDriver())
@@ -530,28 +508,28 @@ public static Statuss fluentWaitForTextToBePresentInElement(By element, String t
 				.ignoring(NoSuchElementException.class);
 		fluentWait.until(ExpectedConditions.textToBePresentInElementLocated(element, text));
 	} catch (NoSuchElementException e) {
-		Statuss.setStatus(false);
-		Statuss.setError("Error while waiting for visibility of element in path: '" + element + "' Details: "
+		StatusResult.setStatus(false);
+		StatusResult.setError("Error while waiting for visibility of element in path: '" + element + "' Details: "
 				+ e.getMessage());
 		Assert.fail("Error while waiting for visibility of element in path: '" + element + "' Details: "
 				+ e.getMessage());
 	} catch (Exception e) {
-		Statuss.setStatus(false);
-		Statuss.setError("Error while waiting for visibility of element in path: '" + element + "' Details: "
+		StatusResult.setStatus(false);
+		StatusResult.setError("Error while waiting for visibility of element in path: '" + element + "' Details: "
 				+ e.getMessage());
 		Assert.fail("Error while waiting for visibility of element in path: '" + element + "' Details: "
 				+ e.getMessage());
 	}
-	return Statuss;
+	return StatusResult;
 }
 
 /**
  * Dynamic wait for number of elements to be. Takes time duration to wait as a
  * parameter.
  */
-public static Statuss fluentWaitForNumberOfElementsToBe(By element, int numberOfElements, int durationInSeconds) {
+public static StatusResult fluentWaitForNumberOfElementsToBe(By element, int numberOfElements, int durationInSeconds) {
 
-	Statuss Statuss = new Statuss(true);
+	StatusResult StatusResult = new StatusResult(true);
 
 	try {
 		Wait<WebDriver> fluentWait = new FluentWait<WebDriver>(DriverFactory.getDriver())
@@ -566,14 +544,14 @@ public static Statuss fluentWaitForNumberOfElementsToBe(By element, int numberOf
 		Reporter.log("Exception occurred while waiting for " + element + " to be: " + numberOfElements + "Details: "
 				+ e.getMessage());
 	}
-	return Statuss;
+	return StatusResult;
 }
 
 /**
  * Dynamic wait for number of elements to be. By default time duration to wait
  * is 10 secs. Overloaded method
  */
-public static Statuss fluentWaitForNumberOfElementsToBe(By element, int numberOfElements) {
+public static StatusResult fluentWaitForNumberOfElementsToBe(By element, int numberOfElements) {
 	return fluentWaitForNumberOfElementsToBe(element, numberOfElements, 10);
 }
 
@@ -581,9 +559,9 @@ public static Statuss fluentWaitForNumberOfElementsToBe(By element, int numberOf
  * Dynamic wait for number of elements to be less than. By default wait duration
  * is set at 60 secs
  */
-public static Statuss fluentWaitForNumberOfElementsToBeLessThan(By element, int number) {
+public static StatusResult fluentWaitForNumberOfElementsToBeLessThan(By element, int number) {
 
-	Statuss Statuss = new Statuss(true);
+	StatusResult StatusResult = new StatusResult(true);
 
 	try {
 		Wait<WebDriver> fluentWait_60seconds = new FluentWait<WebDriver>(DriverFactory.getDriver())
@@ -591,26 +569,26 @@ public static Statuss fluentWaitForNumberOfElementsToBeLessThan(By element, int 
 				.ignoring(NoSuchElementException.class);
 		fluentWait_60seconds.until(ExpectedConditions.numberOfElementsToBeLessThan(element, number));
 	} catch (NoSuchElementException e) {
-		Statuss.setStatus(false);
-		Statuss.setError("Element not found: " + element + "Details: " + e.getMessage());
+		StatusResult.setStatus(false);
+		StatusResult.setError("Element not found: " + element + "Details: " + e.getMessage());
 		Assert.fail("Exception occured while waiting for " + element + " to be less than: " + number + " Details: "
 				+ e.getMessage());
 	} catch (Exception e) {
-		Statuss.setStatus(false);
-		Statuss.setError("Exception occured while waiting for " + element + " to be less than: " + number
+		StatusResult.setStatus(false);
+		StatusResult.setError("Exception occured while waiting for " + element + " to be less than: " + number
 				+ " Details: " + e.getMessage());
 		Assert.fail("Exception occured while waiting for " + element + " to be less than: " + number + " Details: "
 				+ e.getMessage());
 	}
-	return Statuss;
+	return StatusResult;
 }
 
 /**
  * Dynamic wait for number of elements to be more than
  */
-public static Statuss fluentWaitForNumberOfElementsToBeMoreThan(By element, int number) {
+public static StatusResult fluentWaitForNumberOfElementsToBeMoreThan(By element, int number) {
 
-	Statuss Statuss = new Statuss(true);
+	StatusResult StatusResult = new StatusResult(true);
 
 	try {
 		Wait<WebDriver> fluentWait_60seconds = new FluentWait<WebDriver>(DriverFactory.getDriver())
@@ -618,24 +596,24 @@ public static Statuss fluentWaitForNumberOfElementsToBeMoreThan(By element, int 
 				.ignoring(NoSuchElementException.class);
 		fluentWait_60seconds.until(ExpectedConditions.numberOfElementsToBeMoreThan(element, number));
 	} catch (NoSuchElementException e) {
-		Statuss.setStatus(false);
-		Statuss.setError("Element not found: " + element + "Details: " + e.getMessage());
+		StatusResult.setStatus(false);
+		StatusResult.setError("Element not found: " + element + "Details: " + e.getMessage());
 		Assert.fail("Exception occured while waiting for " + element + " to be more than: " + number + " Details: "
 				+ e.getMessage());
 	} catch (Exception e) {
-		Statuss.setStatus(false);
-		Statuss.setError("Exception occured while waiting for " + element + " to be more than: " + number
+		StatusResult.setStatus(false);
+		StatusResult.setError("Exception occured while waiting for " + element + " to be more than: " + number
 				+ " Details: " + e.getMessage());
 		Assert.fail("Exception occured while waiting for " + element + " to be more than: " + number + " Details: "
 				+ e.getMessage());
 	}
-	return Statuss;
+	return StatusResult;
 }
 
 /**
  * Dynamic wait for presence of element in DOM
  */
-public static Statuss fluentWaitForPresenceOfElement(By element) {
+public static StatusResult fluentWaitForPresenceOfElement(By element) {
 	return fluentWaitForPresenceOfElement(element, 60, true);
 
 }
@@ -643,8 +621,8 @@ public static Statuss fluentWaitForPresenceOfElement(By element) {
 /**
  * Dynamic wait for presence of element in DOM overloaded Method
  */
-public static Statuss fluentWaitForPresenceOfElement(By element, int durationInSeconds, boolean allowException) {
-	Statuss Statuss = new Statuss(true);
+public static StatusResult fluentWaitForPresenceOfElement(By element, int durationInSeconds, boolean allowException) {
+	StatusResult StatusResult = new StatusResult(true);
 
 	try {
 		Wait<WebDriver> fluentWait_seconds = new FluentWait<WebDriver>(DriverFactory.getDriver())
@@ -653,26 +631,26 @@ public static Statuss fluentWaitForPresenceOfElement(By element, int durationInS
 		fluentWait_seconds.until(ExpectedConditions.presenceOfElementLocated(element));
 	} catch (NoSuchElementException e) {
 		if (allowException) {
-			Statuss.setStatus(false);
-			Statuss.setError("Error while waiting for presence of element in path: '" + element + "' Details: "
+			StatusResult.setStatus(false);
+			StatusResult.setError("Error while waiting for presence of element in path: '" + element + "' Details: "
 					+ e.getMessage());
 			Assert.fail("Error while waiting for presence of element in path: '" + element + "' Details: "
 					+ e.getMessage());
 		} else {
-			Statuss.setStatus(false);
+			StatusResult.setStatus(false);
 		}
 	} catch (Exception e) {
 		if (allowException) {
-			Statuss.setStatus(false);
-			Statuss.setError("Error while waiting for presence of element in path: '" + element + "' Details: "
+			StatusResult.setStatus(false);
+			StatusResult.setError("Error while waiting for presence of element in path: '" + element + "' Details: "
 					+ e.getMessage());
 			Assert.fail("Error while waiting for presence of element in path: '" + element + "' Details: "
 					+ e.getMessage());
 		} else {
-			Statuss.setStatus(false);
+			StatusResult.setStatus(false);
 		}
 	}
-	return Statuss;
+	return StatusResult;
 }
 
 /**
@@ -719,38 +697,38 @@ public static String getAttribute(By xpath, String attributeName, String fieldNa
  * Overloaded method
  */
 public static String getAttribute(By xpath, String attributeName, String fieldName, boolean allowException) {
-	Statuss Statuss = new Statuss(true);
+	StatusResult StatusResult = new StatusResult(true);
 	String attributeValue = "";
 	try {
 		startTimer();
 		fluentWaitForPresenceOfElement(xpath, 60, allowException);
 		attributeValue = DriverFactory.getDriver().findElement(xpath).getAttribute(attributeName);
 		endTimer();
-		Reporter.log("Retrieved " + fieldName + "<br></br>Time elapsed- " + getElapsedTime() + "<br></br>");
-		Statuss.setStatus(true);
+		Reporter.log("Retrieved " + fieldName + "\nTime elapsed- " + getElapsedTime() + "\n");
+		StatusResult.setStatus(true);
 	} catch (NoSuchElementException e) {
 		if (allowException) {
-			Statuss.setStatus(false);
+			StatusResult.setStatus(false);
 			endTimer();
 			Assert.fail("Error in retrieving the attribute value of xpath :" + xpath + " Details: " + e.getMessage()
-					+ "<br></br>Time elapsed- " + getElapsedTime() + "<br></br>");
+					+ "\nTime elapsed- " + getElapsedTime() + "\n");
 		} else {
-			Statuss.setStatus(false);
+			StatusResult.setStatus(false);
 			endTimer();
-			Statuss.setError("Error in retrieving the attribute value of xpath :" + xpath + " Details: "
-					+ e.getMessage() + "<br></br>Time elapsed- " + getElapsedTime() + "<br></br>");
+			StatusResult.setError("Error in retrieving the attribute value of xpath :" + xpath + " Details: "
+					+ e.getMessage() + "\nTime elapsed- " + getElapsedTime() + "\n");
 		}
 	} catch (Exception e) {
 		if (allowException) {
-			Statuss.setStatus(false);
+			StatusResult.setStatus(false);
 			endTimer();
 			Assert.fail("Error in retrieving the attribute value of xpath :" + xpath + " Details: " + e.getMessage()
-					+ "<br></br>Time elapsed- " + getElapsedTime() + "<br></br>");
+					+ "\nTime elapsed- " + getElapsedTime() + "\n");
 		} else {
-			Statuss.setStatus(false);
+			StatusResult.setStatus(false);
 			endTimer();
-			Statuss.setError("Error in retrieving the attribute value of xpath :" + xpath + " Details: "
-					+ e.getMessage() + "<br></br>Time elapsed- " + getElapsedTime() + "<br></br>");
+			StatusResult.setError("Error in retrieving the attribute value of xpath :" + xpath + " Details: "
+					+ e.getMessage() + "\nTime elapsed- " + getElapsedTime() + "\n");
 		}
 	}
 	return attributeValue;
@@ -771,7 +749,7 @@ public void fluentWaitForApplicationLoad() {
  * at 7 secs
  */
 public static void fluentWaitForInvisibilityOfLoadingIcon() {
-	Statuss Statuss = new Statuss(true);
+	StatusResult StatusResult = new StatusResult(true);
 	By element = getElementIdentifierFromJson("LoadingIcon", "xpath");
 
 	try {
@@ -781,7 +759,7 @@ public static void fluentWaitForInvisibilityOfLoadingIcon() {
 		fluentWait_3seconds.until(ExpectedConditions.attributeToBe(element, "class", "loading"));
 		fluentWait_3seconds.until(ExpectedConditions.attributeToBe(element, "class", ""));
 	} catch (Exception e) {
-		Statuss.setStatus(true);
+		StatusResult.setStatus(true);
 	}
 }
 
@@ -790,7 +768,7 @@ public static void fluentWaitForInvisibilityOfLoadingIcon() {
  * at 7 secs
  */
 public static void waitForLoadingToComplete() {
-	Statuss Statuss = new Statuss(true);
+	StatusResult StatusResult = new StatusResult(true);
 	// By element = getElementIdentifierFromJson("LoadingIcon", "xpath");
 	By copyRightText = getElementIdentifierFromJson("CopyrightInfoLbl", "xpath");
 	ElementUtil.threadSleep(1000);
@@ -803,7 +781,7 @@ public static void waitForLoadingToComplete() {
 	try {
 
 	} catch (Exception e) {
-		Statuss.setStatus(false);
+		StatusResult.setStatus(false);
 	}
 }
 
@@ -829,7 +807,7 @@ public static void threadSleep(int durationInMiliSecs) {
 		startTimer();
 		Thread.sleep(durationInMiliSecs);
 		endTimer();
-		Reporter.log("Hard wait" + "<br></br>Time elapsed- " + getElapsedTime() + "<br></br>");
+		Reporter.log("Hard wait" + "\nTime elapsed- " + getElapsedTime() + "\n");
 	} catch (InterruptedException e) {
 		e.printStackTrace();
 	}
@@ -837,16 +815,16 @@ public static void threadSleep(int durationInMiliSecs) {
 /**
  * Fill value in a text box, after clearing its content
  */
-public static Statuss clearAndFillValue(By fieldSelector, String fieldValue, String fieldName) {
+public static StatusResult clearAndFillValue(By fieldSelector, String fieldValue, String fieldName) {
 	return clearAndFillValue(fieldSelector, fieldValue, fieldName, true);
 }
 
 /**
  * Fill value in a text box, after clearing its content Overloaded Method
  */
-public static Statuss clearAndFillValue(By fieldSelector, String fieldValue, String fieldName,
+public static StatusResult clearAndFillValue(By fieldSelector, String fieldValue, String fieldName,
 		boolean allowException) {
-	Statuss status = new Statuss(true);
+	StatusResult StatusResult = new StatusResult(true);
 	try {
 		startTimer();
 		fluentWaitForVisibility(fieldSelector, 5, allowException);
@@ -855,32 +833,31 @@ public static Statuss clearAndFillValue(By fieldSelector, String fieldValue, Str
 		element.clear();
 		element.sendKeys(fieldValue);
 		endTimer();
-		Reporter.log("Entered " + fieldName + " as " + fieldValue + "<br></br>Time elapsed- " + getElapsedTime()
-				+ "<br></br>");
-	} catch (NoSuchElementException e) {
+		
+	//	ExtentCucumberAdapter.getCurrentStep().log(Status.INFO, "Entered " + fieldName + " as " + fieldValue + "\nTime elapsed- " + getElapsedTime()+ "\n");
+		Reporter.log("Entered " + fieldName + " as " + fieldValue + "\nTime elapsed- " + getElapsedTime()+ "\n");
+		} catch (NoSuchElementException e) {
 		if (allowException) {
-			status.setStatus(false);
+			StatusResult.setStatus(false);
 			endTimer();
-			status.setError("Error in clearing and filling: " + fieldName + ". Details: " + e.getMessage());
+			StatusResult.setError("Error in clearing and filling: " + fieldName + ". Details: " + e.getMessage());
 			Assert.fail("Error in clearing and filling: " + fieldName + ". Details: " + e.getMessage()
-					+ "<br></br>Time elapsed- " + getElapsedTime() + "<br></br>");
+					+ "\nTime elapsed- " + getElapsedTime() + "\n");
 		} else {
-			status.setStatus(false);
+			StatusResult.setStatus(false);
 		}
 	} catch (Exception e) {
 		if (allowException) {
-			status.setStatus(false);
+			StatusResult.setStatus(false);
 			endTimer();
-			status.setError("Error in clearing and filling: " + fieldName + ". Details: " + e.getMessage());
+			StatusResult.setError("Error in clearing and filling: " + fieldName + ". Details: " + e.getMessage());
 			Assert.fail("Error in clearing and filling: " + fieldName + ". Details: " + e.getMessage()
-					+ "<br></br>Time elapsed- " + getElapsedTime() + "<br></br>");
+					+ "\nTime elapsed- " + getElapsedTime() + "\n");
 		} else {
-			status.setStatus(false);
+			StatusResult.setStatus(false);
 		}
 	}
-	return status;
+	return StatusResult;
+ }
+
 }
-
-	
-}	
-
