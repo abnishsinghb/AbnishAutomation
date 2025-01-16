@@ -26,9 +26,6 @@ public class DriverFactory {
 
     // ThreadLocal for WebDriver and ExtentTest
     private static ThreadLocal<WebDriver> tlDriver = new ThreadLocal<>();
-    private static ThreadLocal<ExtentTest> extentTest = new ThreadLocal<>();
-    public static ExtentReports extent;
-    private static ExtentSparkReporter sparkReporter;
 
     /**
      * This method is used to initialize the thread-local driver based on the given
