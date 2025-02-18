@@ -16,7 +16,7 @@ public class LoginPage {
     private By passwordInputLocator = ElementUtil.getElementIdentifierFromJson("password", "name"); 
     private By loginButtonLocator = ElementUtil.getElementIdentifierFromJson("login_Btn", "xpath");
     private By forgottenPasswordLinkLocator = ElementUtil.getElementIdentifierFromJson("Forgotten", "linkText");
-    private By logoutLinkLocator = ElementUtil.getElementIdentifierFromJson("Logout_Txt", "linkText");
+    private By logoutLinkLocator = ElementUtil.getElementIdentifierFromJson("Logout_Txt", "xpath");
 
 
     // Constructor

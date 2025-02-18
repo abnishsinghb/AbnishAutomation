@@ -1,4 +1,8 @@
 package util;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.PrintStream;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -14,6 +18,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.openqa.selenium.By;
@@ -29,6 +35,13 @@ import com.aventstack.extentreports.Status;
 import com.aventstack.extentreports.cucumber.adapter.ExtentCucumberAdapter;
 import com.aventstack.extentreports.reporter.ExtentSparkReporter;
 
+import io.restassured.builder.RequestSpecBuilder;
+import io.restassured.filter.log.RequestLoggingFilter;
+import io.restassured.filter.log.ResponseLoggingFilter;
+import io.restassured.http.ContentType;
+import io.restassured.path.json.JsonPath;
+import io.restassured.response.Response;
+import io.restassured.specification.RequestSpecification;
 import setup.DriverFactory;
 import org.testng.Assert;
 
@@ -44,8 +57,8 @@ public class ElementUtil extends DriverFactory{
 	static Instant end;
 	static String parentWindow = "";
 	static String childWindow = "";
+	public static RequestSpecification req;
 
-	
 	/**
 	 * Get Elapsed time
 	 */
@@ -191,15 +204,15 @@ public static StatusResult click(By xpath, String fieldName, boolean allowExcept
 		element.click();
 		endTimer();
 	
-		Reporter.log("Clicked on " + fieldName + "\nTime elapsed- " + getElapsedTime() + "\n");
-	//	ExtentCucumberAdapter.addTestStepLog("Clicked on " + fieldName + "\nTime elapsed- " + getElapsedTime() + "\n");
+		Reporter.log("Clicked on " + fieldName + "<br></br>Time elapsed- " + getElapsedTime() + "<br></br>");
+	//	ExtentCucumberAdapter.addTestStepLog("Clicked on " + fieldName + "<br></br>Time elapsed- " + getElapsedTime() + "<br></br>");
 	} catch (NoSuchElementException e) {
 		endTimer();
 		if (allowException) {
 			LogStatusResult.setStatus(false);
 			LogStatusResult.setError("Error in clicking element by xpath :" + xpath + " Details: " + e.getMessage());
 			Assert.fail("Error in clicking element by xpath :" + xpath + " Details: " + e.getMessage()
-					+ "\nTime elapsed- " + getElapsedTime() + "\n");
+					+ "<br></br>Time elapsed- " + getElapsedTime() + "<br></br>");
 		} else {
 			LogStatusResult.setStatus(false);
 		}
@@ -209,7 +222,7 @@ public static StatusResult click(By xpath, String fieldName, boolean allowExcept
 			LogStatusResult.setStatus(false);
 			LogStatusResult.setError("Error in clicking element by xpath :" + xpath + " Details: " + e.getMessage());
 			Assert.fail("Error in clicking element by xpath :" + xpath + " Details: " + e.getMessage()
-					+ "\nTime elapsed- " + getElapsedTime() + "\n");
+					+ "<br></br>Time elapsed- " + getElapsedTime() + "<br></br>");
 		} else {
 			LogStatusResult.setStatus(false);
 		}
@@ -240,14 +253,14 @@ public static StatusResult isSelected(By xpath, String fieldName, boolean allowE
 		WebElement element = DriverFactory.getDriver().findElement(xpath);
 		element.isSelected();
 		endTimer();
-		Reporter.log("Selected " + fieldName + "\nTime elapsed- " + getElapsedTime() + "\n");
+		Reporter.log("Selected " + fieldName + "<br></br>Time elapsed- " + getElapsedTime() + "<br></br>");
 	} catch (NoSuchElementException e) {
 		endTimer();
 		if (allowException) {
 			LogStatusResult.setStatus(false);
 			LogStatusResult.setError("Error in Verifying the element by xpath :" + xpath + " Details: " + e.getMessage());
 			Assert.fail("Error in Verifying the element by xpath :" + xpath + " Details: " + e.getMessage()
-					+ "\nTime elapsed- " + getElapsedTime() + "\n");
+					+ "<br></br>Time elapsed- " + getElapsedTime() + "<br></br>");
 		} else {
 			LogStatusResult.setStatus(false);
 		}
@@ -257,7 +270,7 @@ public static StatusResult isSelected(By xpath, String fieldName, boolean allowE
 			LogStatusResult.setStatus(false);
 			LogStatusResult.setError("Error in Verifying the element by xpath :" + xpath + " Details: " + e.getMessage());
 			Assert.fail("Error in Verifying the element by xpath :" + xpath + " Details: " + e.getMessage()
-					+ "\nTime elapsed- " + getElapsedTime() + "\n");
+					+ "<br></br>Time elapsed- " + getElapsedTime() + "<br></br>");
 		} else {
 			LogStatusResult.setStatus(false);
 		}
@@ -326,13 +339,13 @@ public static String getText(By xpath, String fieldName, boolean allowException)
 		WebElement element = DriverFactory.getDriver().findElement(xpath);
 		textvalue = element.getText();
 		endTimer();
-		Reporter.log("Retrieved " + fieldName + "\nTime elapsed- " + getElapsedTime() + "\n");
+		Reporter.log("Retrieved " + fieldName + "<br></br>Time elapsed- " + getElapsedTime() + "<br></br>");
 	} catch (NoSuchElementException e) {
 		if (allowException) {
 			LogStatusResult.setStatus(false);
 			endTimer();
 			Assert.fail("Error in getting the text from xpath :" + xpath + " Details: " + e.getMessage()
-					+ "\nTime elapsed- " + getElapsedTime() + "\n");
+					+ "<br></br>Time elapsed- " + getElapsedTime() + "<br></br>");
 		} else {
 			LogStatusResult.setStatus(false);
 		}
@@ -341,7 +354,7 @@ public static String getText(By xpath, String fieldName, boolean allowException)
 			LogStatusResult.setStatus(false);
 			endTimer();
 			Assert.fail("Error in getting the text from xpath :" + xpath + " Details: " + e.getMessage()
-					+ "\nTime elapsed- " + getElapsedTime() + "\n");
+					+ "<br></br>Time elapsed- " + getElapsedTime() + "<br></br>");
 		} else {
 			LogStatusResult.setStatus(false);
 		}
@@ -356,7 +369,7 @@ public static StatusResult refreshPage() {
 	StatusResult LogStatusResult = new StatusResult(true, "");
 	try {
 		DriverFactory.getDriver().navigate().refresh();
-		Reporter.log("Refreshed web page \n");
+		Reporter.log("Refreshed web page <br></br>");
 	} catch (Exception e) {
 		LogStatusResult.setStatus(false);
 	}
@@ -369,7 +382,7 @@ public static StatusResult backPage() {
 	StatusResult LogStatusResult = new StatusResult(true, "");
 	try {
 		DriverFactory.getDriver().navigate().back();
-		Reporter.log("Backward web page \n");
+		Reporter.log("Backward web page <br></br>");
 	} catch (Exception e) {
 		LogStatusResult.setStatus(false);
 	}
@@ -704,31 +717,31 @@ public static String getAttribute(By xpath, String attributeName, String fieldNa
 		fluentWaitForPresenceOfElement(xpath, 60, allowException);
 		attributeValue = DriverFactory.getDriver().findElement(xpath).getAttribute(attributeName);
 		endTimer();
-		Reporter.log("Retrieved " + fieldName + "\nTime elapsed- " + getElapsedTime() + "\n");
+		Reporter.log("Retrieved " + fieldName + "<br></br>Time elapsed- " + getElapsedTime() + "<br></br>");
 		StatusResult.setStatus(true);
 	} catch (NoSuchElementException e) {
 		if (allowException) {
 			StatusResult.setStatus(false);
 			endTimer();
 			Assert.fail("Error in retrieving the attribute value of xpath :" + xpath + " Details: " + e.getMessage()
-					+ "\nTime elapsed- " + getElapsedTime() + "\n");
+					+ "<br></br>Time elapsed- " + getElapsedTime() + "<br></br>");
 		} else {
 			StatusResult.setStatus(false);
 			endTimer();
 			StatusResult.setError("Error in retrieving the attribute value of xpath :" + xpath + " Details: "
-					+ e.getMessage() + "\nTime elapsed- " + getElapsedTime() + "\n");
+					+ e.getMessage() + "<br></br>Time elapsed- " + getElapsedTime() + "<br></br>");
 		}
 	} catch (Exception e) {
 		if (allowException) {
 			StatusResult.setStatus(false);
 			endTimer();
 			Assert.fail("Error in retrieving the attribute value of xpath :" + xpath + " Details: " + e.getMessage()
-					+ "\nTime elapsed- " + getElapsedTime() + "\n");
+					+ "<br></br>Time elapsed- " + getElapsedTime() + "<br></br>");
 		} else {
 			StatusResult.setStatus(false);
 			endTimer();
 			StatusResult.setError("Error in retrieving the attribute value of xpath :" + xpath + " Details: "
-					+ e.getMessage() + "\nTime elapsed- " + getElapsedTime() + "\n");
+					+ e.getMessage() + "<br></br>Time elapsed- " + getElapsedTime() + "<br></br>");
 		}
 	}
 	return attributeValue;
@@ -807,7 +820,7 @@ public static void threadSleep(int durationInMiliSecs) {
 		startTimer();
 		Thread.sleep(durationInMiliSecs);
 		endTimer();
-		Reporter.log("Hard wait" + "\nTime elapsed- " + getElapsedTime() + "\n");
+		Reporter.log("Hard wait" + "<br></br>Time elapsed- " + getElapsedTime() + "<br></br>");
 	} catch (InterruptedException e) {
 		e.printStackTrace();
 	}
@@ -834,15 +847,15 @@ public static StatusResult clearAndFillValue(By fieldSelector, String fieldValue
 		element.sendKeys(fieldValue);
 		endTimer();
 		
-	//	ExtentCucumberAdapter.getCurrentStep().log(Status.INFO, "Entered " + fieldName + " as " + fieldValue + "\nTime elapsed- " + getElapsedTime()+ "\n");
-		Reporter.log("Entered " + fieldName + " as " + fieldValue + "\nTime elapsed- " + getElapsedTime()+ "\n");
+	//	ExtentCucumberAdapter.getCurrentStep().log(Status.INFO, "Entered " + fieldName + " as " + fieldValue + "<br></br>Time elapsed- " + getElapsedTime()+ "<br></br>");
+		Reporter.log("Entered " + fieldName + " as " + fieldValue + "<br></br>Time elapsed- " + getElapsedTime()+ "<br></br>");
 		} catch (NoSuchElementException e) {
 		if (allowException) {
 			StatusResult.setStatus(false);
 			endTimer();
 			StatusResult.setError("Error in clearing and filling: " + fieldName + ". Details: " + e.getMessage());
 			Assert.fail("Error in clearing and filling: " + fieldName + ". Details: " + e.getMessage()
-					+ "\nTime elapsed- " + getElapsedTime() + "\n");
+					+ "<br></br>Time elapsed- " + getElapsedTime() + "<br></br>");
 		} else {
 			StatusResult.setStatus(false);
 		}
@@ -852,12 +865,62 @@ public static StatusResult clearAndFillValue(By fieldSelector, String fieldValue
 			endTimer();
 			StatusResult.setError("Error in clearing and filling: " + fieldName + ". Details: " + e.getMessage());
 			Assert.fail("Error in clearing and filling: " + fieldName + ". Details: " + e.getMessage()
-					+ "\nTime elapsed- " + getElapsedTime() + "\n");
+					+ "<br></br>Time elapsed- " + getElapsedTime() + "<br></br>");
 		} else {
 			StatusResult.setStatus(false);
 		}
 	}
 	return StatusResult;
  }
+
+public static JsonPath rawJson(String json) {
+	JsonPath js = null;
+	try {
+		 js = new JsonPath(json);
+		
+	}catch(Exception e) {
+		e.printStackTrace();
+	}
+	return js;
+	  
+  }
+
+public static RequestSpecification requestSpecification() throws IOException
+{
+	
+	if(req==null)
+	{
+	PrintStream log =new PrintStream(new FileOutputStream("logging.txt"));
+	 req=new RequestSpecBuilder().setBaseUri(getProperty("ApibaseUrl")).addQueryParam("key", "qaclick123")
+			 .addFilter(RequestLoggingFilter.logRequestTo(log))
+			 .addFilter(ResponseLoggingFilter.logResponseTo(log))
+	.setContentType(ContentType.JSON).build();
+	 return req;
+	}
+	return req;
+	
+	
+}
+/**
+ * Read properties
+ */
+public static String getProperty(String key) {
+	FileInputStream fis;
+	Properties prop = new Properties();
+	try {
+		fis = new FileInputStream(Constants.PROPERTIES_FILE_LOCATION);
+		prop.load(fis);
+	} catch (IOException e) {
+		e.printStackTrace();
+	}
+	return prop.getProperty(key);
+}
+
+public static String getJsonPath(Response response,String key)
+{
+	  String resp=response.asString();
+	JsonPath   js = new JsonPath(resp);
+	return js.get(key).toString();
+}
 
 }

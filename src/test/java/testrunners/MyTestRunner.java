@@ -16,7 +16,7 @@ import com.aventstack.extentreports.ExtentTest;
                 "timeline:test-output-thread/"
         },
         monochrome = true,
-        glue = {"tests", "setup"},
+        glue = {"stepDefnition", "setup"},
         features = {"src/test/resources/features"},
         dryRun = false
 )

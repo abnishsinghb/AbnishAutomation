@@ -4,7 +4,7 @@
 			"password":"password",
 			"Forgotten":"Forgotten Password",
 			"login_Btn":"//input[@value='Login']",
-		"Logout_Txt":"Logout",
+		"Logout_Txt":"//span[contains(text(),'My Account')]",
 			"LoadingIcon":"//i[@class='fa fa-home']"
    }
 }

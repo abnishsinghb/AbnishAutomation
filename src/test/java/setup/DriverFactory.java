@@ -16,6 +16,7 @@ import com.aventstack.extentreports.reporter.ExtentHtmlReporter;
 import com.aventstack.extentreports.reporter.ExtentSparkReporter;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
+import util.ElementUtil;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -56,7 +57,7 @@ public class DriverFactory {
         // Common setup for all browsers
         WebDriver driver = getDriver();
         driver.manage().deleteAllCookies();
-        driver.get("https://naveenautomationlabs.com/opencart/index.php?route=account/login");
+        driver.get(ElementUtil.getProperty("URL"));
         driver.manage().window().maximize();  // Might be overridden for mobile view
 
         return driver;
