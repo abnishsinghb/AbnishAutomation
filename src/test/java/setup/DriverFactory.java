@@ -75,6 +75,12 @@ public class DriverFactory {
             setMobileEmulation(options);
         }
 
+        // Run headless automatically in CI (or when -Dheadless=true is passed) so the suite
+        // works without a display, e.g. on GitHub Actions runners.
+        if (Boolean.parseBoolean(System.getProperty("headless", System.getenv("CI")))) {
+            options.addArguments("--headless=new", "--disable-gpu", "--window-size=1920,1080", "--no-sandbox", "--disable-dev-shm-usage");
+        }
+
         tlDriver.set(new ChromeDriver(options));
     }
 
